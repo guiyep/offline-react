@@ -1,6 +1,6 @@
 {
   "name": "offline-react",
-  "version": "1.5.3",
+  "version": "0.0.1",
   "description": "a library that will help you build react apps that works 100% offline",
   "author": "guiyep",
   "license": "MIT",
