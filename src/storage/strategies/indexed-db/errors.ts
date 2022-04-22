@@ -1,6 +1,6 @@
 export class DbNotFound extends Error {
-  constructor(key) {
-    super(`Db: Item not found with key: ${key}`);
+  constructor() {
+    super('Db: The database was not found');
     this.name = 'DbNotFound';
   }
 }

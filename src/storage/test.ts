@@ -1,14 +1,19 @@
 import 'fake-indexeddb/auto';
 import FDBFactory from 'fake-indexeddb/lib/FDBFactory';
 import { storage } from './index';
-import { DbNotFound } from './errors';
+import { DbItemNotFound } from './errors';
 
-const value = { a: 222 };
+type Value = {
+  a: number;
+};
+
+const value: Value = { a: 222 };
 
 describe('storage', () => {
   beforeEach(() => {
-    // eslint-disable-next-line no-undef
-    indexedDB = new FDBFactory();
+    /* eslint-disable */
+    window.indexedDB = new FDBFactory();
+    /* eslint-enable */
   });
 
   test('defined', () => {
@@ -17,15 +22,15 @@ describe('storage', () => {
 
   test('to get an invalid key', async () => {
     try {
-      const db = storage({ name: 'test' });
+      const db = storage<Value>({ name: 'test' });
       await db.get({ key: 'key5' });
     } catch (e) {
-      expect(e).toBeInstanceOf(DbNotFound);
+      expect(e).toBeInstanceOf(DbItemNotFound);
     }
   });
 
   test('to get and set item', async () => {
-    const db = storage({ name: 'test' });
+    const db = storage<Value>({ name: 'test' });
     await db.set({ key: 'key2', value });
     await db.set({ key: 'key', value });
     const result = await db.get({ key: 'key' });
@@ -35,7 +40,7 @@ describe('storage', () => {
   });
 
   test('to find a condition', async () => {
-    const db = storage({ name: 'test' });
+    const db = storage<Value>({ name: 'test' });
     await db.set({ key: 'key2', value });
     await db.set({ key: 'key', value });
     const result = await db.find(({ a }) => a === 222);
@@ -53,18 +58,18 @@ describe('storage', () => {
 
   test('to multiple instances do not override each other', async () => {
     try {
-      const db = storage({ name: 'test' });
+      const db = storage<Value>({ name: 'test' });
       const db2 = storage({ name: 'test2' });
       await db.set({ key: 'key', value });
       await db2.set({ key: 'key5', value });
       await db.get({ key: 'key5' });
     } catch (e) {
-      expect(e).toBeInstanceOf(DbNotFound);
+      expect(e).toBeInstanceOf(DbItemNotFound);
     }
   });
 
   test('to update same item multiple times', async () => {
-    const db = storage({ name: 'test' });
+    const db = storage<Value>({ name: 'test' });
     await db.set({ key: 'key', value });
     await db.set({
       key: 'key',
