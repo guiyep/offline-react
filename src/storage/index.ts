@@ -5,12 +5,12 @@ import type { KeyProp, KeyValueProp, NameProp, Storage, ConditionProp, Store } f
 
 export const createStore = <T>({ name }: NameProp): Store<T> => createInstance({ name });
 
-export const get = async <T>({ key }: KeyProp, Store: Store<T>): Promise<unknown> => {
-  const data = await Store.getItem(key);
-  if (data === null) {
+export const get = async <T>({ key }: KeyProp, Store: Store<T>): Promise<T> => {
+  const result = await Store.getItem(key);
+  if (result === null || result === undefined) {
     throw new DbItemNotFound(key);
   }
-  return data;
+  return result.data;
 };
 
 export const set = <T>({ key, value }: KeyValueProp<T>, Store: Store<T>): Promise<unknown> =>

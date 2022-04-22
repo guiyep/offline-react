@@ -5,13 +5,13 @@ import type { NameProp, Store, IterateFunction } from '../../types';
 import type { InternalData, InternalDataNoKey } from '../types';
 import type { InternalStore } from './types';
 
-const asDbPromise = async <T>(f: () => IDBRequest<T>, store: InternalStore): Promise<T> => {
+const asDbPromise = async <T>(f: () => IDBRequest<any>, store: InternalStore): Promise<T> => {
   await store.promise;
   return new Promise((resolve, reject) => {
     const request = f();
 
     request.onsuccess = () => {
-      resolve(request.result);
+      resolve(request.result as T);
     };
 
     request.onerror = (e) => {
@@ -20,8 +20,8 @@ const asDbPromise = async <T>(f: () => IDBRequest<T>, store: InternalStore): Pro
   });
 };
 
-export const getItem = (key: string, store: InternalStore): Promise<unknown> =>
-  asDbPromise(() => {
+export const getItem = <T>(key: string, store: InternalStore): Promise<T> =>
+  asDbPromise<T>(() => {
     const { db, name } = store;
 
     if (!db) {
@@ -68,7 +68,7 @@ export const setItem = async <T>(data: InternalData<T>, store: InternalStore): P
 };
 
 export const iterate = async <T>(f: IterateFunction<T>, store: InternalStore) => {
-  const list = await asDbPromise(() => {
+  const list = await asDbPromise<InternalData<T>[]>(() => {
     const { db, name } = store;
 
     if (!db) {

@@ -56,7 +56,8 @@
     "prefer-destructuring": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-    "jest/no-conditional-expect": "off"
+    "jest/no-conditional-expect": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "overrides": [
     {
